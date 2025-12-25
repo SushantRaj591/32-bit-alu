@@ -1,0 +1,84 @@
+module alu_32_tb();
+parameter width =32;
+
+reg [width -1:0]A;
+reg [width -1:0]B;
+reg [2:0]ctrl;
+
+wire z;
+wire [width-1:0]y;
+wire c;
+wire overflow;
+
+
+alu uut(
+    .A(A),
+    .B(B),
+    .ctrl(ctrl),
+    .z(z),
+    .y(y),
+    .c(c),
+    .overflow(overflow)
+);
+initial 
+begin
+$monitor("AT T=%0t A=%h,B=%h,ctrl=%b,z=%b,y=%h,c=%b,overflow=%b",$time,A,B,ctrl,z,y,c,overflow);
+ A=32'hFFFFFFFF;
+ B=32'h00000001;
+ ctrl=3'b000;
+#5;
+$display("AT T=%0t A=%h,B=%h,ctrl=%b,z=%b,y=%h,c=%b,overflow=%b",$time,A,B,ctrl,z,y,c,overflow);
+A = 32'h80000000;  
+B = 32'h00000001;  
+ ctrl=3'b001;
+  #5;
+  $display("AT T=%0t A=%h,B=%h,ctrl=%b,z=%b,y=%h,c=%b,overflow=%b",$time,A,B,ctrl,z,y,c,overflow);
+ A=32'hFFFFFFFF;
+ B=32'h10001001;
+ ctrl=3'b010;
+  #5;
+  $display("AT T=%0t A=%h,B=%h,ctrl=%b,z=%b,y=%h,c=%b,overflow=%b",$time,A,B,ctrl,z,y,c,overflow);
+ A=32'hFFFFFFFF;
+ B=32'h19901001;
+ ctrl=3'b011;
+#15;
+$display("AT T=%0t A=%h,B=%h,ctrl=%b,z=%b,y=%h,c=%b,overflow=%b",$time,A,B,ctrl,z,y,c,overflow);
+ A=32'hFFFFFFFF;
+ B=32'h00000001;
+ ctrl=3'b100;
+ #15;
+ $display("AT T=%0t A=%h,B=%h,ctrl=%b,z=%b,y=%h,c=%b,overflow=%b",$time,A,B,ctrl,z,y,c,overflow);
+ A=32'hFFFFFFFF;
+ B=32'h00000001;
+  ctrl=3'b101;
+ #15;
+ $display("AT T=%0t A=%h,B=%h,ctrl=%b,z=%b,y=%h,c=%b,overflow=%b",$time,A,B,ctrl,z,y,c,overflow);
+  A=32'h789FFFFF;
+ B=32'h00000001;
+ ctrl=3'b110;
+ #15;
+ $display("AT T=%0t A=%h,B=%h,ctrl=%b,z=%b,y=%h,c=%b,overflow=%b",$time,A,B,ctrl,z,y,c,overflow);
+  A=32'd1023;
+  B=32'd110000000;
+ctrl=3'b111;
+ #5;
+ $display("AT T=%0t A=%h,B=%h,ctrl=%b,z=%b,y=%h,c=%b,overflow=%b",$time,A,B,ctrl,z,y,c,overflow);
+ #10 $finish;
+ end 
+ reg [width-1:0]exp;
+
+ always @(*)
+ begin
+ if(ctrl==3'b000)
+ exp =A+B;
+ end
+ always @(A or B or ctrl) begin
+    if (ctrl == 3'b000) begin
+        #1;
+        if (y !== exp)
+            $display("ERROR: A=%h B=%h y=%h exp=%h", A, B, y, exp);
+    end
+end
+
+ endmodule
+
